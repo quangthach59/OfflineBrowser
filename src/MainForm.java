@@ -41,7 +41,7 @@ public class MainForm {
         //Set content panel
         frame.setContentPane(new MainForm().jMainPanel);
         //Set preferred/default form size
-        frame.setPreferredSize(new Dimension(300, 200));
+        //frame.setPreferredSize(new Dimension(300, 200));
         //Disallow changing form size
         frame.setResizable(false);
         //Pack
