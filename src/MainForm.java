@@ -1,7 +1,11 @@
+import sun.net.util.URLUtil;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.*;
+import java.net.URL;
 
 public class MainForm {
     //Main panel
@@ -40,8 +44,6 @@ public class MainForm {
         JFrame frame = new JFrame("Offline Browser");
         //Set content panel
         frame.setContentPane(new MainForm().jMainPanel);
-        //Set preferred/default form size
-        //frame.setPreferredSize(new Dimension(300, 200));
         //Disallow changing form size
         frame.setResizable(false);
         //Pack
@@ -53,5 +55,4 @@ public class MainForm {
         //Set form to be visible
         frame.setVisible(true);
     }
-
 }

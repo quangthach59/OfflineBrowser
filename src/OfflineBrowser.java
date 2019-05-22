@@ -21,7 +21,6 @@ public class OfflineBrowser {
 
     /**
      * Get URL without prefix
-     *
      * @param param input URL, possibly containing http:// || https:// || www.
      * @return remove URL prefix
      */
@@ -29,8 +28,7 @@ public class OfflineBrowser {
         String result = param;
         if (result.contains("http://")) {
             result = result.substring(new String("http://").length());
-        }
-        if (result.contains("https://")) {
+        } else if (result.contains("https://")) {
             result = result.substring(new String("https://").length());
         }
         if (result.contains("www.")) {
@@ -77,16 +75,15 @@ public class OfflineBrowser {
                 getAllLinks(url, urlList);
                 exportURLListToFile(urlList);
                 JOptionPane.showMessageDialog(null, "This works out! Site saved to " + fileName);
-                //saveImage("https://live.staticflickr.com/7907/46834888674_025daa71ef_o.jpg");
-                //saveImage("https://www.carifred.com/quick_any2ico/Quick_Any2Ico.exe");
+                saveFile("https://www.github.com/features/code-review");
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
     }
 
-    private void saveImage(String imageUrl) throws IOException {
-        URL url = new URL(imageUrl);
+    private void saveFile(String fileURL) throws IOException {
+        URL url = new URL(fileURL);
         String fileName = url.getFile();
         String destName = "output\\" + fileName.substring(fileName.lastIndexOf("/"));
         System.out.println(destName);
@@ -127,7 +124,7 @@ public class OfflineBrowser {
             if (!getHomepage(s).equals(urlHomepage)) {
                 //URL is complete
                 if (s.contains("http://") || s.contains("https://")) {
-                    if (getHomepage(s).indexOf(urlHomepage) == 0) {
+                    if (getHomepage(s).indexOf(urlHomepage)==0) {
                         fs1.write(s.getBytes());
                         fs1.write('\n');
                     }
