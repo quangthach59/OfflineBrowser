@@ -1,8 +1,7 @@
 import javax.swing.*;
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.channels.Channels;
@@ -16,38 +15,17 @@ public class OfflineBrowser {
 
     public OfflineBrowser(String param) {
         url = param;
-        urlHomepage = getHomepage(url);
-    }
-
-    /**
-     * Get URL without prefix
-     * @param param input URL, possibly containing http:// || https:// || www.
-     * @return remove URL prefix
-     */
-    private String getHomepage(String param) {
-        String result = param;
-        if (result.contains("http://")) {
-            result = result.substring(new String("http://").length());
-        } else if (result.contains("https://")) {
-            result = result.substring(new String("https://").length());
-        }
-        if (result.contains("www.")) {
-            result = result.substring(new String("www.").length());
-        }
-        return result;
+        if (!url.endsWith("/"))
+            url += "/";
+        urlHomepage = getURLWithoutProtocol(url);
     }
 
     private boolean isConnectionAvailable() {
         try {
-            //Create new URL
             URL urlObj = new URL(url);
-            //Create new connection
             HttpURLConnection con = (HttpURLConnection) urlObj.openConnection();
-            //Set request method
             con.setRequestMethod("GET");
-            //Set connection timeout
-            con.setConnectTimeout(5000);
-            //Connect
+            con.setConnectTimeout(3000);
             con.connect();
             //Compare response code, connection accepted if code is 200
             //Reference here: https://docs.oracle.com/javase/7/docs/api/java/net/HttpURLConnection.html
@@ -60,82 +38,129 @@ public class OfflineBrowser {
         return true;
     }
 
-    public void Start() {
-        if (!isConnectionAvailable()) {
-            JOptionPane.showMessageDialog(null, "Connection failed, URL may not exist or network is not available!");
-        } else {
-            try {
-                URL website = new URL(url);
-                ReadableByteChannel rbc = Channels.newChannel(website.openStream());
-                String fileName = "output\\homepage.html";
-                FileOutputStream fos = new FileOutputStream(fileName);
-                fos.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);
-                fos.close();
-                ArrayList<String> urlList = new ArrayList<String>();
-                getAllLinks(url, urlList);
-                exportURLListToFile(urlList);
-                JOptionPane.showMessageDialog(null, "This works out! Site saved to " + fileName);
-                saveFile("https://www.github.com/features/code-review");
-            } catch (IOException e) {
-                e.printStackTrace();
+    private String getURLWithoutProtocol(String param) {
+        String result = param;
+        for (String s : new String[]{"http://", "https://", "www."}) {
+            if (result.contains(s)) {
+                result = result.substring(s.length());
             }
         }
+        return result;
     }
 
-    private void saveFile(String fileURL) throws IOException {
-        URL url = new URL(fileURL);
-        String fileName = url.getFile();
-        String destName = "output\\" + fileName.substring(fileName.lastIndexOf("/"));
-        System.out.println(destName);
+    private String getURLWithProtocol(String urlFile) {
+        //If file has no protocol, remove the first slash of the urlFile and the homepage (already contains slash)
+        if (urlFile.startsWith("/"))
+            return url + urlFile.substring(1);
+        //If urlFile already contains protocol
+        return urlFile;
+    }
 
-        InputStream is = url.openStream();
-        OutputStream os = new FileOutputStream(destName);
+    private boolean URLContainsFileExt(String urlFile) {
+        int index = getURLWithoutProtocol(urlFile).lastIndexOf("/");
+        if (index == -1)
+            return false;
+        String fileName = getURLWithoutProtocol(urlFile).substring(index);
+        if (fileName.length() == 1)
+            return false;
+        return fileName.contains("/") && fileName.contains(".");
+    }
 
-        byte[] b = new byte[2048];
-        int length;
-
-        while ((length = is.read(b)) != -1) {
-            os.write(b, 0, length);
+    private void saveFile(String urlFile) throws IOException {
+        try {
+            URL url = new URL(getURLWithProtocol(urlFile));
+            ReadableByteChannel rbc = Channels.newChannel(url.openStream());
+            String destName = getFileNameWithPath(urlFile);
+            FileOutputStream fos = new FileOutputStream(destName);
+            fos.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);
+            fos.close();
+            System.out.println("Saved to " + destName);
+        } catch (IOException e) {
+            System.out.println("Error saving file " + urlFile);
         }
 
-        is.close();
-        os.close();
-        JOptionPane.showMessageDialog(null, destName);
     }
 
-    private void getAllLinks(String urlParam, ArrayList<String> urlList) throws IOException {
+    private void newGetAllLinks(String urlParam, ArrayList<String> urlList) throws IOException {
         URL pageLocation = new URL(urlParam);
         Scanner in = new Scanner(pageLocation.openStream());
         while (in.hasNext()) {
             String line = in.next();
             if (line.contains("href=\"")) {
-                int from = line.indexOf("\"");
-                int to = line.lastIndexOf("\"");
-                urlList.add(line.substring(from + 1, to));
-            }
-        }
-    }
-
-    private void exportURLListToFile(ArrayList<String> urlList) throws IOException {
-        FileOutputStream fs1 = new FileOutputStream("output\\outputhttp.txt");
-        FileOutputStream fs2 = new FileOutputStream("output\\output.txt");
-        for (String s : urlList) {
-            //Assure child URL is not duplicated
-            if (!getHomepage(s).equals(urlHomepage)) {
-                //URL is complete
-                if (s.contains("http://") || s.contains("https://")) {
-                    if (getHomepage(s).indexOf(urlHomepage)==0) {
-                        fs1.write(s.getBytes());
-                        fs1.write('\n');
-                    }
-                } else if (!s.equals("")) {
-                    fs2.write(s.getBytes());
-                    fs2.write('\n');
+                try {
+                    int from = line.indexOf("\"");
+                    int to = line.lastIndexOf("\"");
+                    urlList.add(line.substring(from + 1, to));
+                } catch (Exception e) {
+                    System.out.print("Error occurred with URL(s). Offline site may not work properly.");
                 }
             }
         }
-        fs1.close();
-        fs2.close();
     }
 
+    private String getParentpage(String urlFile) {
+        String file = getURLWithoutProtocol(urlFile);
+        int index = file.indexOf("/");
+        if (index == -1)
+            return file;
+        return file.substring(0, file.indexOf("/"));
+    }
+
+    private String getFileNameWithPath(String urlFile) {
+        String output = "output\\";
+        String folderPath = "output/";
+        String fileName = getFileNameWithoutSite(urlFile);
+        System.out.println(fileName);
+        while (fileName.contains("/")) {
+            output += fileName.substring(0, fileName.indexOf("/")) + "\\";
+            folderPath += fileName.substring(0, fileName.indexOf("/")) + "/";
+            fileName = fileName.substring(fileName.indexOf("/") + 1);
+        }
+        output += fileName;
+        if (!fileName.contains("."))
+            output += ".html";
+        File folder = new File(folderPath);
+        boolean bool = folder.mkdirs();
+        if (!bool)
+            System.out.println("Error creating directory " + folderPath);
+        return output;
+    }
+
+    private String getFileNameWithoutSite(String urlFile) {
+        //Remove site and the first slash
+        String output = getURLWithoutProtocol(getURLWithProtocol(urlFile));
+        return output.substring(output.indexOf("/") + 1);
+    }
+
+    private void exportToOutputFile(ArrayList<String> urlList) throws IOException {
+        FileOutputStream fos = new FileOutputStream("output\\output.txt");
+        for (String s : urlList) {
+            //As long as s is a file || s is child || s and url contains the same homepage
+            if (((s.startsWith("/") && s.length() > 1) || URLContainsFileExt(s) || getParentpage(s).equals(urlHomepage)) && !s.contains("#")) {
+                fos.write(s.getBytes());
+                fos.write('\n');
+                System.out.print(getURLWithProtocol(s) + " ");
+                saveFile(s);
+            }
+        }
+        fos.close();
+    }
+
+    public void StartBrowsing() {
+        //No connection, finish
+        if (!isConnectionAvailable()) {
+            JOptionPane.showMessageDialog(null, "Error parsing input to URL");
+        } else {
+            try {
+                saveFile(url);
+                ArrayList<String> urlList = new ArrayList<String>();
+                newGetAllLinks(url, urlList);
+                exportToOutputFile(urlList);
+                JOptionPane.showMessageDialog(null, "Done!");
+            } catch (IOException e) {
+                e.printStackTrace();
+                System.out.print("Error with StartBrowsing");
+            }
+        }
+    }
 }

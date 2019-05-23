@@ -5,6 +5,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.*;
+import java.net.MalformedURLException;
 import java.net.URL;
 
 public class MainForm {
@@ -25,7 +26,8 @@ public class MainForm {
                     //Initialize object
                     OfflineBrowser ob = new OfflineBrowser(txtInput.getText());
                     //Start processing
-                    ob.Start();
+                    //ob.Start();
+                    ob.StartBrowsing();
                 }
         );
         //Add enter shortkey for text field
