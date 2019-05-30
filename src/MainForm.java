@@ -24,7 +24,8 @@ public class MainForm {
         //Add click event for button
         startButton.addActionListener(e -> {
                     //Initialize object
-                    OfflineBrowser ob = new OfflineBrowser(txtInput.getText());
+                    //OfflineBrowser ob = new OfflineBrowser(txtInput.getText());
+                    OffBrowser ob = new OffBrowser(txtInput.getText());
                     //Start processing
                     //ob.Start();
                     ob.StartBrowsing();

@@ -7,17 +7,20 @@ import java.net.URL;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 public class OfflineBrowser {
     private String url;
     private String urlHomepage;
+    private String urlWithoutProtocol;
 
     public OfflineBrowser(String param) {
         url = param;
         if (!url.endsWith("/"))
             url += "/";
         urlHomepage = getURLWithoutProtocol(url);
+        urlWithoutProtocol = urlHomepage;
     }
 
     private boolean isConnectionAvailable() {
@@ -98,6 +101,33 @@ public class OfflineBrowser {
         }
     }
 
+    private void DownloadHomePage(String urlParam) throws IOException {
+        URL page = new URL(urlParam);
+        Scanner in = new Scanner(page.openStream());
+        String fileName = "default.html";
+        FileOutputStream fos = new FileOutputStream("output\\" + fileName);
+        while (in.hasNext()) {
+            String line = in.nextLine();
+            line = line.replaceAll("https://www." + urlWithoutProtocol + "\"", fileName + "\"");
+            line = line.replaceAll("https://" + urlWithoutProtocol + "\"", fileName + "\"");
+            line = line.replaceAll("http://" + urlWithoutProtocol + "\"", fileName + "\"");
+            line = line.replaceAll("https://www." + urlWithoutProtocol, "");
+            line = line.replaceAll("https://" + urlWithoutProtocol, "");
+            line = line.replaceAll("http://" + urlWithoutProtocol, "");
+            fos.write(line.getBytes());
+        }
+        fos.close();
+    }
+
+    private String getFileName(String urlParam) throws IOException
+    {
+        String result = urlParam;
+        result = getURLWithoutProtocol(result);
+        result = result.substring((getParentpage(urlParam) + "/").length());
+
+        return result;
+    }
+
     private String getParentpage(String urlFile) {
         String file = getURLWithoutProtocol(urlFile);
         int index = file.indexOf("/");
@@ -152,10 +182,11 @@ public class OfflineBrowser {
             JOptionPane.showMessageDialog(null, "Error parsing input to URL");
         } else {
             try {
-                saveFile(url);
-                ArrayList<String> urlList = new ArrayList<String>();
-                newGetAllLinks(url, urlList);
-                exportToOutputFile(urlList);
+                DownloadHomePage(url);
+//                saveFile(url);
+//                ArrayList<String> urlList = new ArrayList<String>();
+//                newGetAllLinks(url, urlList);
+//                exportToOutputFile(urlList);
                 JOptionPane.showMessageDialog(null, "Done!");
             } catch (IOException e) {
                 e.printStackTrace();
