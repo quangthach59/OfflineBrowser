@@ -2,10 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="1e36c230-6005-424e-881f-1cc6c937e12d" name="Default Changelist" comment="Temporarily stable UI">
-      <change afterPath="$PROJECT_DIR$/src/OffBrowser.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/MainForm.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/MainForm.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/OfflineBrowser.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/OfflineBrowser.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/OffBrowser.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/OffBrowser.java" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -32,20 +30,26 @@
     <option name="isMigrated" value="true" />
   </component>
   <component name="FileEditorManager">
-    <leaf>
+    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/OffBrowser.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="581">
-              <caret line="143" column="46" selection-start-line="143" selection-start-column="46" selection-end-line="143" selection-end-column="46" />
+            <state relative-caret-position="104">
+              <caret line="149" column="59" selection-start-line="149" selection-start-column="59" selection-end-line="149" selection-end-column="59" />
               <folding>
                 <element signature="imports" expanded="true" />
+                <element signature="docComment;method#removeProtocol#0;class#OffBrowser#0" />
                 <element signature="method#removeProtocol#0;class#OffBrowser#0" />
+                <element signature="docComment;method#getStringChildren#0;class#OffBrowser#0" />
                 <element signature="method#getStringChildren#0;class#OffBrowser#0" />
+                <element signature="docComment;method#getFullFileName#0;class#OffBrowser#0" />
                 <element signature="method#getFullFileName#0;class#OffBrowser#0" />
+                <element signature="docComment;method#isConnectionAvailable#0;class#OffBrowser#0" />
                 <element signature="method#isConnectionAvailable#0;class#OffBrowser#0" />
-                <element signature="e#4541#4549#0" expanded="true" />
-                <element signature="e#4847#4855#0" expanded="true" />
+                <element signature="method#DownloadPage#0;class#OffBrowser#0" />
+                <element signature="method#saveFile#0;class#OffBrowser#0" />
+                <element signature="docComment;method#LinkNeedsAdding#0;class#OffBrowser#0" />
+                <element signature="docComment;method#StartBrowsing#0;class#OffBrowser#0" />
               </folding>
             </state>
           </provider>
@@ -74,8 +78,11 @@
       <find>default</find>
       <find>filen</find>
       <find>isconnec</find>
-      <find>output</find>
       <find>mkdi</find>
+      <find>new URL</find>
+      <find>output</find>
+      <find>default.html</find>
+      <find>homepagewithslash</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -89,11 +96,11 @@
         <option value="$PROJECT_DIR$/src/NewForm.form" />
         <option value="$PROJECT_DIR$/src/Form1.form" />
         <option value="$PROJECT_DIR$/src/GUIMain.form" />
-        <option value="$PROJECT_DIR$/src/MainForm.form" />
         <option value="$PROJECT_DIR$/src/TestFormUI.fxml" />
         <option value="$PROJECT_DIR$/src/ShowMsg.java" />
         <option value="$PROJECT_DIR$/src/OfflineBrowser.java" />
         <option value="$PROJECT_DIR$/src/MainForm.java" />
+        <option value="$PROJECT_DIR$/src/MainForm.form" />
         <option value="$PROJECT_DIR$/src/OffBrowser.java" />
       </list>
     </option>
@@ -116,8 +123,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
-      <pane id="PackagesPane" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -130,16 +135,12 @@
               <item name="OfflineBrowser" type="462c0819:PsiDirectoryNode" />
               <item name="src" type="462c0819:PsiDirectoryNode" />
             </path>
-            <path>
-              <item name="OfflineBrowser" type="b2602c69:ProjectViewProjectNode" />
-              <item name="OfflineBrowser" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="MainForm" type="e9f4de52:FormNode" />
-            </path>
           </expand>
           <select />
         </subPane>
       </pane>
+      <pane id="Scope" />
+      <pane id="PackagesPane" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -214,8 +215,9 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1382" height="754" extended-state="6" />
+    <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" weight="0.14657739" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.14657739" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Designer" order="2" />
       <window_info id="UI Designer" order="3" />
@@ -235,7 +237,7 @@
       <window_info anchor="bottom" id="Version Control" order="9" sideWeight="0.49925596" weight="0.32850242" />
       <window_info anchor="bottom" id="Application Servers" order="10" show_stripe_button="false" />
       <window_info anchor="bottom" id="Messages" order="11" weight="0.32850242" />
-      <window_info active="true" anchor="bottom" auto_hide="true" id="Run" order="12" visible="true" weight="0.32850242" />
+      <window_info anchor="bottom" auto_hide="true" id="Run" order="12" weight="0.5056361" />
       <window_info anchor="bottom" id="Terminal" order="13" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" show_stripe_button="false" weight="0.24962178" />
@@ -350,9 +352,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/MainForm.form">
-      <provider selected="true" editor-type-id="ui-designer" />
-    </entry>
     <entry file="file://$PROJECT_DIR$/.gitignore">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
@@ -370,26 +369,27 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/MainForm.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="187">
-          <caret line="27" column="43" selection-start-line="27" selection-start-column="43" selection-end-line="27" selection-end-column="43" />
+        <state relative-caret-position="434">
+          <caret line="59" column="5" selection-start-line="59" selection-start-column="5" selection-end-line="59" selection-end-column="5" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/MainForm.form">
+      <provider selected="true" editor-type-id="ui-designer" />
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/OfflineBrowser.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="279">
-          <caret line="168" column="12" selection-start-line="168" selection-start-column="12" selection-end-line="168" selection-end-column="12" />
+        <state relative-caret-position="164">
+          <caret line="53" column="19" selection-start-line="53" selection-start-column="19" selection-end-line="53" selection-end-column="19" />
           <folding>
             <element signature="imports" expanded="true" />
             <element signature="method#OfflineBrowser#0;class#OfflineBrowser#0" />
             <element signature="method#isConnectionAvailable#0;class#OfflineBrowser#0" />
             <element signature="method#getURLWithoutProtocol#0;class#OfflineBrowser#0" />
-            <element signature="method#getURLWithProtocol#0;class#OfflineBrowser#0" />
             <element signature="method#URLContainsFileExt#0;class#OfflineBrowser#0" />
-            <element signature="method#saveFile#0;class#OfflineBrowser#0" />
             <element signature="method#newGetAllLinks#0;class#OfflineBrowser#0" />
             <element signature="method#DownloadHomePage#0;class#OfflineBrowser#0" />
             <element signature="method#getFileName#0;class#OfflineBrowser#0" />
@@ -403,16 +403,22 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/OffBrowser.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="581">
-          <caret line="143" column="46" selection-start-line="143" selection-start-column="46" selection-end-line="143" selection-end-column="46" />
+        <state relative-caret-position="104">
+          <caret line="149" column="59" selection-start-line="149" selection-start-column="59" selection-end-line="149" selection-end-column="59" />
           <folding>
             <element signature="imports" expanded="true" />
+            <element signature="docComment;method#removeProtocol#0;class#OffBrowser#0" />
             <element signature="method#removeProtocol#0;class#OffBrowser#0" />
+            <element signature="docComment;method#getStringChildren#0;class#OffBrowser#0" />
             <element signature="method#getStringChildren#0;class#OffBrowser#0" />
+            <element signature="docComment;method#getFullFileName#0;class#OffBrowser#0" />
             <element signature="method#getFullFileName#0;class#OffBrowser#0" />
+            <element signature="docComment;method#isConnectionAvailable#0;class#OffBrowser#0" />
             <element signature="method#isConnectionAvailable#0;class#OffBrowser#0" />
-            <element signature="e#4541#4549#0" expanded="true" />
-            <element signature="e#4847#4855#0" expanded="true" />
+            <element signature="method#DownloadPage#0;class#OffBrowser#0" />
+            <element signature="method#saveFile#0;class#OffBrowser#0" />
+            <element signature="docComment;method#LinkNeedsAdding#0;class#OffBrowser#0" />
+            <element signature="docComment;method#StartBrowsing#0;class#OffBrowser#0" />
           </folding>
         </state>
       </provider>
