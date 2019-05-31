@@ -1,12 +1,8 @@
-import sun.net.util.URLUtil;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.*;
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.io.File;
 
 public class MainForm {
     //Main panel
@@ -15,8 +11,9 @@ public class MainForm {
     private JTextField txtInput;
     //Button
     private JButton startButton;
+    private JCheckBox cbReplaceCSS;
 
-    private MainForm() {
+    private MainForm(){
         //Set button text
         startButton.setText("Start");
         //Set button tooltip
@@ -24,11 +21,19 @@ public class MainForm {
         //Add click event for button
         startButton.addActionListener(e -> {
                     //Initialize object
-                    //OfflineBrowser ob = new OfflineBrowser(txtInput.getText());
                     OffBrowser ob = new OffBrowser(txtInput.getText());
+                    //Determine if CSS will be replaced
+                    ob.ReplaceCSS(cbReplaceCSS.isSelected());
                     //Start processing
-                    //ob.Start();
                     ob.StartBrowsing();
+                    try {
+                        File outputFolder = new File(OffBrowser.DEFAULT_FOLDER_OUTPUT);
+                        boolean bool = outputFolder.mkdirs();
+                        Desktop.getDesktop().browse(outputFolder.toURI());
+                    } catch(Exception ex)
+                    {
+                        System.out.println(ex.getMessage());
+                    }
                 }
         );
         //Add enter shortkey for text field
@@ -40,6 +45,7 @@ public class MainForm {
                 }
             }
         });
+        JOptionPane.showMessageDialog(null, "Output will be saved to: " + OffBrowser.DEFAULT_FOLDER_OUTPUT);
     }
 
     public static void main(String[] args) {

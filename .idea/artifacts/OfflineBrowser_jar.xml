@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="OfflineBrowser:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/OfflineBrowser_jar</output-path>
+    <root id="archive" name="OfflineBrowser.jar">
+      <element id="module-output" name="OfflineBrowser" />
+    </root>
+  </artifact>
+</component>

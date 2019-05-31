@@ -1,4 +1,5 @@
 import javax.swing.*;
+import java.awt.*;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -13,14 +14,20 @@ public class OffBrowser {
     //Format https://www.example.com/ or https://example.com/
     private String url;
     private String homepageWithSlash;
-    private ArrayList<String> listURLs;
-    private final String DEFAULT_FOLDER_OUTPUT = "output";
+    public static final String DEFAULT_FOLDER_OUTPUT = "D:\\output";
     private final String DEFAULT_HOMEPAGE_FILENAME = "default.html";
-
-    public OffBrowser(String param) {
+    private ArrayList<String> listDownloaded;
+    private boolean replaceCSS = false;
+    private final Lock lock;
+    OffBrowser(String param) {
         url = param;
         homepageWithSlash = removeProtocol(url);
-        listURLs = new ArrayList<>();
+        listDownloaded = new ArrayList<>();
+        lock = new Lock();
+    }
+    void ReplaceCSS(boolean value)
+    {
+        replaceCSS = value;
     }
 
     /**
@@ -113,40 +120,75 @@ public class OffBrowser {
         }
     }
 
+    /**
+     * Download content from an URL and save as a html file
+     * @param param input URL
+     * @throws Exception Page is not available, error processing file name
+     */
     private void DownloadPage(String param) throws Exception {
-        Scanner in = new Scanner(new URL(param).openStream());
-        String fileOutput = getFullFileName(param);
-        //Content will be saved to this file
-        FileOutputStream fos = new FileOutputStream(DEFAULT_FOLDER_OUTPUT + "\\" + fileOutput);
-        ArrayList<String> list = new ArrayList<>();
-        //Scan each line for href
-        while (in.hasNext()) {
-            String line = in.next();
-            //Start of an URL
-            if (line.contains("href=\"")) {
-                //Split from href=" to the closest "
-                line = line.substring(line.indexOf("\"") + 1, line.lastIndexOf("\""));
-                //If this URL is necessary and not duplicated, add to list
-                if (LinkNeedsAdding(line) && !list.contains(line)) {
-                    list.add(line);
-                    saveFile(line);
+        try {
+            if (param.startsWith("/"))
+                param = url + param.substring(1);
+            Scanner in = new Scanner(new URL(param).openStream());
+            String fileOutput = getFullFileName(param);
+            //Content will be saved to this file
+            FileOutputStream fos = new FileOutputStream(DEFAULT_FOLDER_OUTPUT + "\\" + fileOutput);
+            ArrayList<String> list = new ArrayList<>();
+            //Scan each line for href
+            while (in.hasNext()) {
+                String line = in.next();
+                //Start of an URL
+                if (line.contains("href=\"")) {
+                    //Split from href=" to the closest "
+                    line = line.substring(line.indexOf("\"") + 1, line.lastIndexOf("\""));
+                    //If this URL is necessary and not duplicated, add to list
+                    if (LinkNeedsAdding(line) && !list.contains(line)) {
+                        list.add(line);
+                    }
                 }
             }
+            //Close scanner and renew
+            //Read the whole content for find and replace, then save
+            in.close();
+            in = new Scanner(new URL(param).openStream());
+            while (in.hasNext()) {
+                //The whole content of the page as plain text
+                String line = in.nextLine();
+                line = ReplaceURLWithURL(line, list);
+                fos.write(line.getBytes());
+            }
+            fos.close();
+
+            //Loop each URL
+            for (String s : list) {
+                if (!listDownloaded.contains(s)) {
+                    listDownloaded.add(s);
+                    System.out.println("Get " + s);
+                    if (getFullFileName(s).endsWith(".html")) {
+                        DownloadPage(s);
+                    } else {
+                        //DownloadFile(s);
+                        String itemName = s;
+                        if (itemName.startsWith("/"))
+                        {
+                            itemName = url + itemName.substring(1);
+                        }
+                        DownloadThread dt = new DownloadThread(itemName, getFullFileName(itemName), lock);
+                        dt.start();
+                    }
+                }
+            }
+        } catch (Exception e) {
+            System.out.println("Error " + e.getLocalizedMessage());
         }
-        //Close scanner and renew
-        //Read the whole content for find and replace, then save
-        in.close();
-        in = new Scanner(new URL(param).openStream());
-        while (in.hasNext()) {
-            //The whole content of the page as plain text
-            String line = in.nextLine();
-            line = ReplaceURLWithURL(line, list);
-            fos.write(line.getBytes());
-        }
-        fos.close();
     }
 
-    private void saveFile(String param) throws IOException {
+    /**
+     * Download a file from given URL
+     * @param param input URL
+     * @throws IOException Error with connection
+     */
+    private void DownloadFile(String param) throws IOException {
         try {
             if (param.startsWith("/"))
                 param = url + param.substring(1);
@@ -160,13 +202,18 @@ public class OffBrowser {
         } catch (IOException e) {
             System.out.println("Error saving file " + param);
         }
-
     }
 
+    /**
+     * Replace specific URL in a webpage with alternative URL
+     * @param line Current plain text
+     * @param list List of URLs to replace
+     * @return Modified plain text
+     */
     private String ReplaceURLWithURL(String line, ArrayList<String> list) {
+        //Replace homepage with default homepage file, because homepage URL is no longer in list
         line = line.replaceAll("href=\"" + url, "href=\"" + getFullFileName(url));
         for (String s : list) {
-            //System.out.println("Replacing " + s);
             line = line.replaceAll("href=\"" + s, "href=\"" + getFullFileName(s));
         }
         return line;
@@ -186,11 +233,19 @@ public class OffBrowser {
         if (param.startsWith("/"))
             return true;
         //Try to download and replace .css file may leads to crashing UI
-        if (param.endsWith(".css"))
+        if (replaceCSS && param.endsWith(".css"))
+            return true;
+        try {
+            URL urlHome = new URL(url);
+            URL urlParam = new URL(param);
+            //URL and homepage don't share the same host and URL is a HTML, don't add
+            if (!urlHome.getHost().equals(urlParam.getHost()) && param.endsWith(".html"))
+                return false;
+        } catch (Exception e) {
             return false;
+        }
         //Sub-string after the last slash contains a dot, a present of file extension, add
-        //if (param.substring(param.lastIndexOf("/")).contains("."))
-        if (getStringChildren(param).contains("."))
+        if (getStringChildren(param).contains(".") && !param.endsWith(".css"))
             return true;
         try {
             URL urlHome = new URL(url);
@@ -215,8 +270,15 @@ public class OffBrowser {
             try {
                 long startTime = System.currentTimeMillis();
                 DownloadPage(url);
+                while (lock.getRunningThreadsNumber() > 0)
+                    synchronized (lock) {
+                        lock.wait();
+                    }
                 long endTime = System.currentTimeMillis();
                 JOptionPane.showMessageDialog(null, "Done! Time lapsed: " + (endTime - startTime) + "ms");
+                //Open homepage when done
+                File htmlFile = new File(DEFAULT_FOLDER_OUTPUT + "\\" + DEFAULT_HOMEPAGE_FILENAME);
+                Desktop.getDesktop().browse(htmlFile.toURI());
             } catch (Exception e) {
                 e.printStackTrace();
                 System.out.print("Error with StartBrowsing");
